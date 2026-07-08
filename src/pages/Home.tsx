@@ -10,8 +10,8 @@ export function Home() {
         </h1>
         <p className="lede">
           每一个算法拆成一张能亲手拨动的图：改参数、看几何当场变，再一句话把它焊到现实里。
-          <span className="hand"> 一本边学边长的活笔记，</span>
-          没做完的先留个位子。
+          <span className="hand"> 从「导数是什么」这种零基础扫盲起步，</span>
+          一本边学边长的活笔记，没做完的先留个位子。
         </p>
       </section>
 
@@ -29,7 +29,10 @@ export function Home() {
                 a.status === 'live' ? (
                   <Link className="card is-live" to={`/a/${a.slug}`} key={a.slug}>
                     <div className="card-top">
-                      <span className="card-num">{a.slug}</span>
+                      <span className="card-meta">
+                        <span className="card-num">{a.slug}</span>
+                        {a.level && <span className={`chip-level lv-${a.level === '入门' ? 'basic' : 'adv'}`}>{a.level}</span>}
+                      </span>
                       <span className="badge live">可玩</span>
                     </div>
                     <h3>{a.title}</h3>
@@ -38,7 +41,10 @@ export function Home() {
                 ) : (
                   <div className="card is-planned" key={a.slug} aria-disabled>
                     <div className="card-top">
-                      <span className="card-num">{a.slug}</span>
+                      <span className="card-meta">
+                        <span className="card-num">{a.slug}</span>
+                        {a.level && <span className={`chip-level lv-${a.level === '入门' ? 'basic' : 'adv'}`}>{a.level}</span>}
+                      </span>
                       <span className="badge todo">todo</span>
                     </div>
                     <h3>{a.title}</h3>
