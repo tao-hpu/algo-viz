@@ -6,7 +6,7 @@
   "description": "算法可视化实验室 —— 方格纸手感、拖一拖看懂算法的几何直觉。慢慢长出来的一本活笔记。",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/prerender-og.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

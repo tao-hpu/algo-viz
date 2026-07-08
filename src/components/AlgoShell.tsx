@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import { type ReactNode, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { findAlgo, categoryOf, liveAlgos } from '../catalog'
 
@@ -9,6 +9,11 @@ export function AlgoShell({ slug, lede, children }: {
   children: ReactNode
 }) {
   const me = findAlgo(slug)
+  // 站内跳转（SPA）时预渲染的 <head> 不会重跑，手动同步浏览器标签标题。
+  useEffect(() => {
+    if (me) document.title = `${me.title} · 算法可视化实验室`
+    return () => { document.title = '算法可视化实验室 · algo-viz' }
+  }, [me])
   if (!me) return <div className="wrap page">未找到算法：{slug}</div>
   const cat = categoryOf(slug)
 

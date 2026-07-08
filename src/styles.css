@@ -241,7 +241,7 @@ a:hover { text-decoration-color: var(--red); }
 .lab-panels { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
 .lab-panel { flex: 1 1 300px; min-width: 260px; }
 .lab-panel h4 { margin: 0 0 8px; font-size: 13px; font-family: var(--font-mono); color: var(--ink-soft); font-weight: 600; letter-spacing: 0.02em; text-align: center; }
-.lab svg { width: 100%; height: auto; max-width: 100%; display: block; touch-action: none; }
+.lab svg { width: 100%; height: auto; max-width: 100%; display: block; touch-action: none; overflow: hidden; }
 
 .controls { display: flex; flex-wrap: wrap; gap: 22px; align-items: center; margin-top: 20px; padding-top: 18px; border-top: 1px dashed var(--rule); }
 .control { display: flex; flex-direction: column; gap: 4px; min-width: 150px; }
