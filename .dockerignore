@@ -4,3 +4,5 @@ dist
 .DS_Store
 *.log
 deploy.sh
+pnpm-workspace.yaml
+*.tsbuildinfo

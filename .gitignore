@@ -4,6 +4,11 @@ dist-ssr
 *.local
 .DS_Store
 .vite
+*.tsbuildinfo
+
+# pnpm 10/11 的 approve-builds 会写这个（allowBuilds），但服务器 pnpm@9 不认其格式
+# → 只是本地便利文件，不进仓库、不进 Docker
+pnpm-workspace.yaml
 
 # 部署脚本只在服务器上，不进仓库（同 L2A 惯例）
 deploy.sh
