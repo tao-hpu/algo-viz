@@ -1,0 +1,71 @@
+// 全站唯一的算法清单 —— 首页卡片网格、顶栏、页内导航都从这里读。
+// 加新算法 = 往这里加一条 + 写对应页面组件 + 在 App.tsx 挂一条路由。
+//
+// 这是一本「慢慢长出来」的实验笔记：planned 的条目会以虚线 TODO 卡片
+// 出现在首页——未完成也好看，没做完不丢人。
+
+export type AlgoStatus = 'live' | 'planned'
+
+export interface Algo {
+  slug: string          // 路由：/a/<slug>
+  title: string
+  hook: string          // 这个算法回答的「一句话直觉」
+  status: AlgoStatus
+  todo?: string         // planned 时首页显示的手写小注
+}
+
+export interface Category {
+  name: string
+  blurb: string
+  algos: Algo[]
+}
+
+export const catalog: Category[] = [
+  {
+    name: '微分与几何',
+    blurb: '把连续变化画成能拖动的几何动作。',
+    algos: [
+      {
+        slug: 'jacobian',
+        title: '雅可比矩阵',
+        hook: '一个弯曲的映射，凑近看其实就是一个矩阵。',
+        status: 'live',
+      },
+      { slug: 'gradient-field', title: '梯度场', hook: '梯度为什么总指向最陡的上坡方向？', status: 'planned', todo: '想画成拖着走看等高线' },
+      { slug: 'taylor', title: '泰勒展开', hook: '用多项式一层层逼近一条曲线。', status: 'planned', todo: 'todo: 加阶数滑块' },
+    ],
+  },
+  {
+    name: '优化',
+    blurb: '一个数怎么被一步步推到最好。',
+    algos: [
+      { slug: 'gradient-descent', title: '梯度下降', hook: '小球怎么滚到谷底，学习率太大会怎样？', status: 'planned', todo: '先做等高线 + 轨迹' },
+      { slug: 'momentum', title: '动量法', hook: '给小球加惯性，能不能滚得更稳更快？', status: 'planned' },
+    ],
+  },
+  {
+    name: '排序',
+    blurb: '把乱序理顺，各家有各家的巧。',
+    algos: [
+      { slug: 'quicksort', title: '快速排序', hook: '选个基准，分而治之。', status: 'planned', todo: '柱状图 + 分区动画' },
+      { slug: 'merge-sort', title: '归并排序', hook: '拆到最小再两两合并。', status: 'planned' },
+    ],
+  },
+  {
+    name: '图',
+    blurb: '在节点与边之间怎么找路。',
+    algos: [
+      { slug: 'bfs-dfs', title: '广度 / 深度优先', hook: '一层层铺开，还是一条道走到黑？', status: 'planned' },
+      { slug: 'dijkstra', title: '最短路 · Dijkstra', hook: '带权重的地图上，怎么找最省的路。', status: 'planned' },
+    ],
+  },
+]
+
+export const allAlgos = catalog.flatMap((c) => c.algos)
+export const liveAlgos = allAlgos.filter((a) => a.status === 'live')
+export function findAlgo(slug: string) {
+  return allAlgos.find((a) => a.slug === slug)
+}
+export function categoryOf(slug: string) {
+  return catalog.find((c) => c.algos.some((a) => a.slug === slug))?.name ?? ''
+}
