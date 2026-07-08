@@ -1,0 +1,9 @@
+services:
+  web:
+    build: .
+    image: algo-viz:latest
+    container_name: algo-viz
+    restart: always
+    # 只监听本地端口，公网由服务器上的 nginx 反代（algo.fim.ai → 此端口）
+    ports:
+      - "127.0.0.1:5193:80"
