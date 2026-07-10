@@ -257,6 +257,33 @@ input[type=range]::-moz-range-thumb { width: 15px; height: 15px; border-radius: 
 .seg button:last-child { border-right: none; }
 .seg button.on { background: var(--red-wash); color: var(--red-ink); font-weight: 600; }
 
+/* ── 步进播放器（排序 / 图遍历 / 迭代优化） ─────────────── */
+.player { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 20px; padding-top: 18px; border-top: 1px dashed var(--rule); }
+.btn {
+  font-family: var(--font-body); font-size: 13.5px; line-height: 1.5;
+  padding: 5px 12px; border-radius: 5px; border: 1px solid var(--rule);
+  background: transparent; color: var(--ink-soft); cursor: pointer;
+}
+.btn:hover:not(:disabled) { border-color: var(--red-line); color: var(--red-ink); }
+.btn:disabled { opacity: 0.38; cursor: default; }
+.btn.primary { background: var(--red-wash); border-color: var(--red-line); color: var(--red-ink); font-weight: 600; min-width: 60px; }
+.player .scrub { flex: 1 1 120px; min-width: 90px; }
+.frame-count { font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint); white-space: nowrap; }
+
+/* 当前这一步在干嘛：一行大白话，跟着帧走 */
+.step-note {
+  margin-top: 16px; padding: 9px 13px; border-radius: 5px;
+  background: var(--paper-sunk); font-family: var(--font-mono);
+  font-size: 13px; line-height: 1.6; color: var(--ink); min-height: 1.6em;
+}
+.step-note em { font-style: normal; color: var(--red-ink); font-weight: 600; }
+.step-note .done { color: var(--moss); font-weight: 600; }
+
+/* 图例：一排小色块 + 说明 */
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 14px; font-size: 12.5px; color: var(--ink-soft); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 11px; height: 11px; border-radius: 2px; display: inline-block; flex-shrink: 0; }
+
 .readout { display: flex; flex-wrap: wrap; gap: 18px 28px; margin-top: 18px; font-family: var(--font-mono); font-size: 13px; }
 .readout .item { display: flex; flex-direction: column; }
 .readout .item .lbl { color: var(--ink-faint); font-size: 11px; }

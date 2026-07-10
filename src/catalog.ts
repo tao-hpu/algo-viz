@@ -49,32 +49,32 @@ export const catalog: Category[] = [
         status: 'live',
         level: '进阶',
       },
-      { slug: 'gradient-field', title: '梯度场', hook: '梯度为什么总指向最陡的上坡方向？', status: 'planned', level: '进阶', todo: '想画成拖着走看等高线' },
-      { slug: 'taylor', title: '泰勒展开', hook: '用多项式一层层逼近一条曲线。', status: 'planned', level: '进阶', todo: 'todo: 加阶数滑块' },
+      { slug: 'gradient-field', title: '梯度场', hook: '梯度为什么总指向最陡的上坡方向？', status: 'live', level: '进阶' },
+      { slug: 'taylor', title: '泰勒展开', hook: '用多项式一层层逼近一条曲线。', status: 'live', level: '进阶' },
     ],
   },
   {
     name: '优化',
     blurb: '一个数怎么被一步步推到最好。',
     algos: [
-      { slug: 'gradient-descent', title: '梯度下降', hook: '小球怎么滚到谷底，学习率太大会怎样？', status: 'planned', todo: '先做等高线 + 轨迹' },
-      { slug: 'momentum', title: '动量法', hook: '给小球加惯性，能不能滚得更稳更快？', status: 'planned' },
+      { slug: 'gradient-descent', title: '梯度下降', hook: '小球怎么滚到谷底，学习率太大会怎样？', status: 'live', level: '入门' },
+      { slug: 'momentum', title: '动量法', hook: '给小球加惯性，能不能滚得更稳更快？', status: 'live', level: '进阶' },
     ],
   },
   {
     name: '排序',
     blurb: '把乱序理顺，各家有各家的巧。',
     algos: [
-      { slug: 'quicksort', title: '快速排序', hook: '选个基准，分而治之。', status: 'planned', todo: '柱状图 + 分区动画' },
-      { slug: 'merge-sort', title: '归并排序', hook: '拆到最小再两两合并。', status: 'planned' },
+      { slug: 'quicksort', title: '快速排序', hook: '选个基准，分而治之。', status: 'live', level: '入门' },
+      { slug: 'merge-sort', title: '归并排序', hook: '拆到最小再两两合并。', status: 'live', level: '入门' },
     ],
   },
   {
     name: '图',
     blurb: '在节点与边之间怎么找路。',
     algos: [
-      { slug: 'bfs-dfs', title: '广度 / 深度优先', hook: '一层层铺开，还是一条道走到黑？', status: 'planned' },
-      { slug: 'dijkstra', title: '最短路 · Dijkstra', hook: '带权重的地图上，怎么找最省的路。', status: 'planned' },
+      { slug: 'bfs-dfs', title: '广度 / 深度优先', hook: '一层层铺开，还是一条道走到黑？', status: 'live', level: '入门' },
+      { slug: 'dijkstra', title: '最短路 · Dijkstra', hook: '带权重的地图上，怎么找最省的路。', status: 'live', level: '进阶' },
     ],
   },
 ]
