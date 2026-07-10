@@ -14,8 +14,8 @@ type MapDef = {
   key: string
   name: string
   f: (x: number, y: number) => Vec
-  R: number   // 输入平面显示半径
-  Rc: number  // 输出平面显示半径
+  R: number   // 输入向量能拖到的范围（输入网格也画到这里）
+  Rc: number  // 两个面板共用的显示半径（≥R）：同一把尺，面积才可比
   note: string
 }
 
@@ -26,7 +26,7 @@ const MAPS: MapDef[] = [
     f: (x, y) => [x * x - y * y, 2 * x * y],
     R: 1.2,
     Rc: 2.2,
-    note: '把复数平方：离原点越远拉伸越猛，det 随 4·|p|² 变化。',
+    note: '把复数平方：每点的 J 都是纯「旋转+缩放」（保角映射），离原点越远拉伸越猛，det = 4|p|²。',
   },
   {
     key: 'wave',
@@ -34,7 +34,7 @@ const MAPS: MapDef[] = [
     f: (x, y) => [x, y + 0.55 * Math.sin(Math.PI * x)],
     R: 1.5,
     Rc: 2.0,
-    note: '竖直方向按位置起伏。形状被拧歪，但 det≡1，面积一点没变。',
+    note: '竖直方向按位置起伏。形状被拧歪，但 det≡1——绿像和红方块面积一样大，肉眼可查。',
   },
   {
     key: 'swirl',
@@ -45,7 +45,7 @@ const MAPS: MapDef[] = [
     },
     R: 1.5,
     Rc: 1.7,
-    note: '离原点越远转得越多。J 在每点是「旋转+缩放」，角度随半径变。',
+    note: '离原点越远转得越多。J 除了旋转还夹带剪切：方块不只是被转，还被拧歪（看 readout，J 并不是旋转矩阵的形状）。',
   },
 ]
 
@@ -108,8 +108,9 @@ export function Jacobian() {
     if (!ctm) return
     const inv = ctm.inverse()
     const pt = new DOMPointReadOnly(e.clientX, e.clientY).matrixTransform(inv)
-    let x = ((pt.x - C) / S) * m.R
-    let y = (-(pt.y - C) / S) * m.R
+    // 换算按共用显示半径 Rc（两图同一把尺），拖动范围仍夹在输入域 R 内。
+    let x = ((pt.x - C) / S) * m.Rc
+    let y = (-(pt.y - C) / S) * m.Rc
     x = Math.max(-m.R, Math.min(m.R, x))
     y = Math.max(-m.R, Math.min(m.R, y))
     setP([+x.toFixed(3), +y.toFixed(3)])
@@ -141,9 +142,9 @@ export function Jacobian() {
   }
   const trueImgD = samplePath(m, edge, 96) + 'Z'
 
-  const [ppx, ppy] = toPx(px, py, m.R)
+  const [ppx, ppy] = toPx(px, py, m.Rc)
   const [fppx, fppy] = toPx(fpx, fpy, m.Rc)
-  const sqPx = corners.map(([cx, cy]) => toPx(cx, cy, m.R))
+  const sqPx = corners.map(([cx, cy]) => toPx(cx, cy, m.Rc))
   const sqD = 'M' + sqPx.map(([a, b]) => `${a.toFixed(1)} ${b.toFixed(1)}`).join('L') + 'Z'
 
   const fmt = (v: number) => (Math.abs(v) < 0.005 ? '0.00' : v.toFixed(2))
@@ -183,10 +184,10 @@ export function Jacobian() {
               aria-label="输入平面，可拖动采样点"
             >
               {vLines.map((v) => {
-                const [x1, y1] = toPx(v, -m.R, m.R)
-                const [x2, y2] = toPx(v, m.R, m.R)
-                const [x3, y3] = toPx(-m.R, v, m.R)
-                const [x4, y4] = toPx(m.R, v, m.R)
+                const [x1, y1] = toPx(v, -m.R, m.Rc)
+                const [x2, y2] = toPx(v, m.R, m.Rc)
+                const [x3, y3] = toPx(-m.R, v, m.Rc)
+                const [x4, y4] = toPx(m.R, v, m.Rc)
                 return (
                   <g key={v} stroke="#d9d2c4" strokeWidth={v === 0 ? 1.4 : 0.7}>
                     <line x1={x1} y1={y1} x2={x2} y2={y2} />
@@ -228,7 +229,7 @@ export function Jacobian() {
           <div style={{ fontSize: 13.5, color: 'var(--ink-soft)', maxWidth: '22em' }}>
             <span style={{ color: '#4a6b52', fontWeight: 600 }}>绿</span>=真·像（会弯）·{' '}
             <span style={{ color: '#b5391f', fontWeight: 600 }}>红虚线</span>=J 的线性近似。
-            把 ε 拖小，两者贴合；拖大，差距就是「曲率」。
+            把 ε 拖小，两者贴合；拖大，差距就是「曲率」。两图同一把尺，面积能直接比。
           </div>
         </div>
 
