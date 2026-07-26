@@ -77,6 +77,19 @@ export const catalog: Category[] = [
       { slug: 'dijkstra', title: '最短路 · Dijkstra', hook: '带权重的地图上，怎么找最省的路。', status: 'live', level: '进阶' },
     ],
   },
+  {
+    name: '前沿现场',
+    blurb: '悬了一百年、最近才落地的问题。数学不是一本已经写完的书。',
+    algos: [
+      {
+        slug: 'kakeya',
+        title: '挂谷猜想',
+        hook: '针转一圈扫过的面积可以是 0，但它的维数一分也不能少。',
+        status: 'live',
+        level: '进阶',
+      },
+    ],
+  },
 ]
 
 export const allAlgos = catalog.flatMap((c) => c.algos)
