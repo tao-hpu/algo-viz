@@ -4,15 +4,19 @@
 
 ## 部署（线上 algo.fim.ai）
 
-**本地构建 + rsync 静态产物**，服务器不构建（内存紧，会 OOM）。改完代码三步：
+**本地构建 + rsync 静态产物**，服务器不构建（内存紧，会 OOM）。改完代码四步：
 
 ```bash
+git add -A && git commit                          # ① 先提交：部署不走 git，不提交就没有留痕
 pnpm build                                        # 本地出 dist/（含 prerender 的每页 OG）
 rsync -az --delete dist/ aws-hk:~/algo-viz/dist/  # 送静态产物
 ssh aws-hk 'sudo docker restart algo-viz'         # bind-mount 的 nginx 容器重启读新内容
 ```
 
 关键事实与坑：
+
+- **提交是部署的前提**（2026-07-27 用户裁定，algo-viz / linalg-to-attention / llm-from-scratch 三个项目都适用）。部署链路完全不经过 git，「已上线」和「已入库」是两件独立的事，不先提交就会出现线上代码在仓库里查无此物。部署完顺手确认 `git status` 干净。
+- 服务器 `~/algo-viz` 里那个 `.git` **停在 2026-07-08，是旧方案的残留**，与线上内容无关，别拿它当代码已入库的证据。
 
 - 服务器主机 alias `aws-hk`；容器名 `algo-viz`（`nginx:1.27-alpine`），监听 `127.0.0.1:5194`，公网由服务器上的 nginx 反代 `algo.fim.ai`。
 - 容器是 **bind-mount** 起的：`~/algo-viz/dist → /usr/share/nginx/html`、`~/algo-viz/nginx.conf → /etc/nginx/conf.d/default.conf`。所以 dist 一 rsync 上去内容立即生效，restart 只是为了让 nginx 重读配置。
