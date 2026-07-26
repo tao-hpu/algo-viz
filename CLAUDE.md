@@ -4,7 +4,7 @@
 
 ## 部署（线上 algo.fim.ai）
 
-**本地构建 + rsync 静态产物**，服务器不构建（内存紧，会 OOM）。改完代码四步：
+**本地构建 + rsync 静态产物**，服务器不构建。aws-hk 是共享生产机（7.6G 内存跑着十几个容器，含 fim-one 全家桶），在上面构建的风险是内存尖峰把邻居 OOM 掉，不只是自己失败。这也是三个前端项目（algo-viz / linalg-to-attention / llm-from-scratch）的统一做法。改完代码四步：
 
 ```bash
 git add -A && git commit                          # ① 先提交：部署不走 git，不提交就没有留痕
