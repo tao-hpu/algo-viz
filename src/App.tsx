@@ -23,6 +23,8 @@ const QuickSort = L(import('./pages/QuickSort'), 'QuickSort')
 const MergeSort = L(import('./pages/MergeSort'), 'MergeSort')
 const BfsDfs = L(import('./pages/BfsDfs'), 'BfsDfs')
 const Dijkstra = L(import('./pages/Dijkstra'), 'Dijkstra')
+const GoldenAngle = L(import('./pages/GoldenAngle'), 'GoldenAngle')
+const Voronoi = L(import('./pages/Voronoi'), 'Voronoi')
 const Kakeya = L(import('./pages/Kakeya'), 'Kakeya')
 
 function PageFallback() {
@@ -50,6 +52,8 @@ export default function App() {
           <Route path="/a/merge-sort" element={<Suspense fallback={<PageFallback />}><MergeSort /></Suspense>} />
           <Route path="/a/bfs-dfs" element={<Suspense fallback={<PageFallback />}><BfsDfs /></Suspense>} />
           <Route path="/a/dijkstra" element={<Suspense fallback={<PageFallback />}><Dijkstra /></Suspense>} />
+          <Route path="/a/golden-angle" element={<Suspense fallback={<PageFallback />}><GoldenAngle /></Suspense>} />
+          <Route path="/a/voronoi" element={<Suspense fallback={<PageFallback />}><Voronoi /></Suspense>} />
           <Route path="/a/kakeya" element={<Suspense fallback={<PageFallback />}><Kakeya /></Suspense>} />
         </Route>
       </Routes>

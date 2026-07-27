@@ -78,6 +78,26 @@ export const catalog: Category[] = [
     ],
   },
   {
+    name: '自然中的图样',
+    blurb: '不是自然在算数学，是同一条局部规则被反复执行了几百次。',
+    algos: [
+      {
+        slug: 'golden-angle',
+        title: '黄金角与向日葵',
+        hook: '向日葵不知道 φ，它只把新种子挤进当前最大的空隙。',
+        status: 'live',
+        level: '入门',
+      },
+      {
+        slug: 'voronoi',
+        title: 'Voronoi 剖分',
+        hook: '每个点占住离自己最近的那片地，边界自己就长出来了。',
+        status: 'live',
+        level: '进阶',
+      },
+    ],
+  },
+  {
     name: '前沿现场',
     blurb: '悬了一百年、最近才落地的问题。数学不是一本已经写完的书。',
     algos: [
