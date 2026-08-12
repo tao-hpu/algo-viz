@@ -13,6 +13,7 @@ const Derivative = L(import('./pages/Derivative'), 'Derivative')
 const Powers = L(import('./pages/Powers'), 'Powers')
 const DerivRules = L(import('./pages/DerivRules'), 'DerivRules')
 const PartialDerivatives = L(import('./pages/PartialDerivatives'), 'PartialDerivatives')
+const UnitCircle = L(import('./pages/UnitCircle'), 'UnitCircle')
 const MatrixVector = L(import('./pages/MatrixVector'), 'MatrixVector')
 const Linearization = L(import('./pages/Linearization'), 'Linearization')
 const GradientField = L(import('./pages/GradientField'), 'GradientField')
@@ -42,6 +43,7 @@ export default function App() {
           <Route path="/a/powers" element={<Suspense fallback={<PageFallback />}><Powers /></Suspense>} />
           <Route path="/a/deriv-rules" element={<Suspense fallback={<PageFallback />}><DerivRules /></Suspense>} />
           <Route path="/a/partial-derivatives" element={<Suspense fallback={<PageFallback />}><PartialDerivatives /></Suspense>} />
+          <Route path="/a/unit-circle" element={<Suspense fallback={<PageFallback />}><UnitCircle /></Suspense>} />
           <Route path="/a/matrix-vector" element={<Suspense fallback={<PageFallback />}><MatrixVector /></Suspense>} />
           <Route path="/a/linearization" element={<Suspense fallback={<PageFallback />}><Linearization /></Suspense>} />
           <Route path="/a/gradient-field" element={<Suspense fallback={<PageFallback />}><GradientField /></Suspense>} />

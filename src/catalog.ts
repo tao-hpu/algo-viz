@@ -34,6 +34,7 @@ export const catalog: Category[] = [
       { slug: 'powers', title: '次方一家人', hook: '底数/指数/幂/平方/立方；xⁿ 和 eˣ 谁涨得快？', status: 'live', level: '入门' },
       { slug: 'deriv-rules', title: '求导词典', hook: '幂法则 + 常见函数 + 加/乘/除/链式，就这么点。', status: 'live', level: '入门' },
       { slug: 'partial-derivatives', title: '偏导数', hook: '两个旋钮的机器：只动一个，另一个冻成常数。', status: 'live', level: '入门' },
+      { slug: 'unit-circle', title: '单位圆与三角函数', hook: 'sin 和 cos 是同一个圆周运动落在两面墙上的影子。', status: 'live', level: '入门' },
       { slug: 'matrix-vector', title: '矩阵乘向量', hook: '不是玄学：每个输入的贡献加总，就是 J·δ。', status: 'live', level: '入门' },
       { slug: 'linearization', title: '局部线性化', hook: '凑够近，弯的都是直的：f(x₀+δ) ≈ f(x₀) + J·δ。', status: 'live', level: '入门' },
     ],
