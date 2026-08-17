@@ -176,7 +176,7 @@ export function Powers() {
       </div>
 
       <p style={{ color: 'var(--ink-soft)', fontSize: 15 }}>
-        <span style={{ color: '#8a8470', fontWeight: 600 }}>灰</span>=x² ·{' '}
+        <span style={{ color: '#9a968a', fontWeight: 600 }}>灰</span>=x² ·{' '}
         <span style={{ color: '#4a6b52', fontWeight: 600 }}>绿虚线</span>=x³ ·{' '}
         <span style={{ color: '#b5391f', fontWeight: 600 }}>红</span>=eˣ。x∈[0,5] 这一小段里，
         x³ 一度反超过 eˣ{cubeCross.length ? `（约 x≈${cubeCross[0].toFixed(2)}）` : ''}，

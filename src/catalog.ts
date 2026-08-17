@@ -52,6 +52,13 @@ export const catalog: Category[] = [
       },
       { slug: 'gradient-field', title: '梯度场', hook: '梯度为什么总指向最陡的上坡方向？', status: 'live', level: '进阶' },
       { slug: 'taylor', title: '泰勒展开', hook: '用多项式一层层逼近一条曲线。', status: 'live', level: '进阶' },
+      {
+        slug: 'backprop',
+        title: '反向传播',
+        hook: '正向算一遍值，反着走一遍，全部梯度就都在手里了。',
+        status: 'live',
+        level: '进阶',
+      },
     ],
   },
   {

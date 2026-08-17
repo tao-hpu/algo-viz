@@ -304,4 +304,12 @@ input[type=range]::-moz-range-thumb { width: 15px; height: 15px; border-radius: 
 @media (max-width: 560px) {
   body { font-size: 16px; }
   .grid { grid-template-columns: 1fr; }
+  /* 窄屏上顶栏会把「算法可视化」和「目录」逐字折行，很难看。
+     压字号 + 禁止折行，宁可省掉副标题也不折。 */
+  .topbar { gap: 10px; padding-left: 14px; padding-right: 14px; }
+  .wordmark { font-size: 17px; gap: 6px; white-space: nowrap; }
+  .wordmark .sub { display: none; }
+  .topnav { gap: 12px; font-size: 13.5px; }
+  .topnav a { white-space: nowrap; }
+  .topbar-left { gap: 10px; min-width: 0; }
 }

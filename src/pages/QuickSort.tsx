@@ -179,7 +179,9 @@ const xOf = (k: number) => PAD + SLOT * k + (SLOT - BW) / 2
 const cxOf = (k: number) => PAD + SLOT * k + SLOT / 2
 
 const AVG = Math.round(N * Math.log2(N))
-const WORST = (N * N) / 2
+// 最坏情况的比较次数是精确的 n(n−1)/2：每层比 hi−lo 次，层层递减到 1。
+// 写成 n²/2 只是量级说法，会比真实上限多算 n/2 次，readout 里报精确值。
+const WORST_EXACT = (N * (N - 1)) / 2
 
 export function QuickSort() {
   const [dataMode, setDataMode] = useState<DataMode>('rand')
@@ -192,7 +194,8 @@ export function QuickSort() {
   const f = frames[p.i]
 
   const maxV = Math.max(...data)
-  const deadly = dataMode === 'sorted' && pivotMode === 'last'
+  // 逆序和已排好一样致命：取末尾时基准每轮不是最小就是最大，照样只切掉一个元素。
+  const deadly = (dataMode === 'sorted' || dataMode === 'rev') && pivotMode === 'last'
   const showIJ = f.i >= 0 && f.j >= 0
   const dupI = showIJ && f.i === f.j
 
@@ -232,7 +235,7 @@ export function QuickSort() {
           </div>
           {deadly && (
             <div style={{ fontSize: 13.5, color: '#b5391f', maxWidth: '24em', lineHeight: 1.5 }}>
-              这就是朴素快排的死穴：每次分区只切掉一个元素，比较次数逼近 n²/2，递归深度打到 n。
+              这就是朴素快排的死穴：每次分区只切掉一个元素，比较次数顶到 n(n−1)/2 = {WORST_EXACT}，递归深度打到 n−1 = {N - 1}。
             </div>
           )}
         </div>
@@ -318,8 +321,8 @@ export function QuickSort() {
             <span className="val">{AVG}</span>
           </div>
           <div className="item">
-            <span className="lbl">n²/2（切得最偏的样子）</span>
-            <span className="val">{WORST}</span>
+            <span className="lbl">n(n−1)/2（切得最偏的样子）</span>
+            <span className="val">{WORST_EXACT}</span>
           </div>
           <div className="item">
             <span className="lbl">已交换</span>
@@ -354,10 +357,16 @@ export function QuickSort() {
       <h2>为什么最坏是 n²</h2>
       <p>
         如果基准每次都恰好是区间里最小（或最大）的那个数，分区就切不动：一边空着，另一边只少了一个元素。
-        长度从 n 掉到 n−1 再到 n−2，要走 n 层才到底，比较次数堆到 <span className="k">n²/2 = {WORST}</span>。
-        把上面切成「已排好 + 取末尾」按下播放，你会亲眼看着递归深度爬到 23、比较次数逼近 {WORST}。
-        <strong>排好序的数组是朴素快排的死穴</strong>，而这不是理论上的可能性：数据库导出的结果、上一轮排过的列表、
-        按时间写入的日志，天天都是有序的。「大量重复」加「取末尾」也是同一个坑，等值元素全被推到右边，一样切不动。
+        长度从 n 掉到 n−1 再到 n−2，要走 n 层才到底，比较次数堆到 <span className="k">n(n−1)/2 = {WORST_EXACT}</span>，
+        也就是常说的 n²/2 量级。把上面切成「已排好 + 取末尾」按下播放，你会亲眼看着递归深度爬到 n−1、
+        比较次数顶到 {WORST_EXACT} 附近。<strong>排好序的数组是朴素快排的死穴</strong>，
+        而这不是理论上的可能性：数据库导出的结果、上一轮排过的列表、按时间写入的日志，天天都是有序的。
+      </p>
+      <p>
+        <strong>「逆序」一样致命，而且更狠一点</strong>。取末尾时基准轮流是区间的最小值和最大值，
+        一边空、一边只少一个，跟已排好是同一个退化。别以为「倒着排的数据」会碰巧躲开这个坑。
+        「大量重复」加「取末尾」是第三个版本：等值元素在 <span className="k">v &lt; pivot</span> 的判据下全被推到右边，
+        同样切不动，只是没那么极端。
       </p>
 
       <h2>随机化和三数取中怎么救</h2>
