@@ -144,6 +144,17 @@ function tintOf(t: number) {
 const C_DX = '#d6452c'   // 沿 x 切的那一刀
 const C_DY = '#4a6b52'   // 沿 y 切的那一刀
 
+/* ── 线宽的单位问题 ──────────────────────────────────────────
+   strokeWidth 是 viewBox 单位，会跟着图一起被缩放。这个盒子的 viewBox
+   只有 356 宽，面板却按 560 渲染，等于整张图连同线宽一起放大了 1.57 倍：
+   照站内惯例写的 1.8 会画成 2.8 像素，2.6 会画成 4.1 像素——比下面那两张
+   2D 切片图（放大 1.20 倍）的同类线粗了将近一倍，看着就是这张图「墨太重」。
+
+   所以这里的线宽和半径一律按「渲染后想要多少 CSS 像素」来写，再由 ink()
+   把倍率除回去。站内约定：主曲线 / 切线 1.8、辅助虚线 1.2–1.4、网格 0.6–0.9。 */
+const BOX_W_CSS = 560          // 面板 maxWidth，见下面 <Box3D> 外面那层 lab-panel
+const ink = (cssPx: number) => +(cssPx / (BOX_W_CSS / BVB_W)).toFixed(2)
+
 type Item = { d: number; el: ReactNode }
 /** 两个各自有序的列表合并成一个有序列表——曲面网格是静态的，只有曲线每帧新建。 */
 function mergeByDepth(a: Item[], b: Item[]): ReactNode[] {
@@ -222,7 +233,7 @@ function Box3D({ s, zMin, zMax, cx0, cy0, onPick }: {
           d,
           el: (
             <polygon key={`q${i}-${j}`} points={poly2(corners)}
-              fill={tintOf(zSum / 4 / absMax)} stroke="rgba(58,56,47,0.20)" strokeWidth={0.6} />
+              fill={tintOf(zSum / 4 / absMax)} stroke="rgba(58,56,47,0.20)" strokeWidth={ink(0.6)} />
           ),
         })
       }
@@ -244,7 +255,7 @@ function Box3D({ s, zMin, zMax, cx0, cy0, onPick }: {
       const b = surfPt(x2, y2)
       const d = depthOf((toU(x1) + toU(x2)) / 2, (toV(y1) + toV(y2)) / 2,
         (toW(s.f(x1, y1)) + toW(s.f(x2, y2))) / 2) + 2.5 / M
-      out.push({ d, el: <line key={key} x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={color} strokeWidth={2.6} strokeLinecap="round" /> })
+      out.push({ d, el: <line key={key} x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={color} strokeWidth={ink(1.8)} strokeLinecap="round" /> })
     }
     for (let i = 0; i < n; i++) {
       const xa = s.xMin + ((s.xMax - s.xMin) * i) / n
@@ -337,43 +348,44 @@ function Box3D({ s, zMin, zMax, cx0, cy0, onPick }: {
     >
       {/* 两面墙：最远的两面，先画 */}
       <polygon points={poly2([pr(-HALF, -HALF, W_FLOOR), pr(HALF, -HALF, W_FLOOR), pr(HALF, -HALF, W_TOP), pr(-HALF, -HALF, W_TOP)])}
-        fill="#f3ecdd" stroke="#ddd5c5" strokeWidth={0.9} />
+        fill="#f3ecdd" stroke="#ddd5c5" strokeWidth={ink(0.9)} />
       <polygon points={poly2([pr(-HALF, -HALF, W_FLOOR), pr(-HALF, HALF, W_FLOOR), pr(-HALF, HALF, W_TOP), pr(-HALF, -HALF, W_TOP)])}
-        fill="#ece5d4" stroke="#ddd5c5" strokeWidth={0.9} />
+        fill="#ece5d4" stroke="#ddd5c5" strokeWidth={ink(0.9)} />
 
       {/* 墙上的两条剖面曲线：就是下面那两张 2D 切片图。
           先画实线，会被曲面挡住一部分——挡住的那截等下用淡线补一遍（工程制图里的隐藏线）。 */}
-      <path d={wallXPath} fill="none" stroke={C_DX} strokeWidth={1.8} opacity={0.85} />
-      <path d={wallYPath} fill="none" stroke={C_DY} strokeWidth={1.8} opacity={0.85} />
+      <path d={wallXPath} fill="none" stroke={C_DX} strokeWidth={ink(1.5)} opacity={0.85} />
+      <path d={wallYPath} fill="none" stroke={C_DY} strokeWidth={ink(1.5)} opacity={0.85} />
 
       {/* 地板 = 那张地形图 + 两道切口。地板铺到墙根，地形图只占中间的数据范围。 */}
       <polygon points={poly2([pr(-HALF, -HALF, W_FLOOR), pr(HALF, -HALF, W_FLOOR), pr(HALF, HALF, W_FLOOR), pr(-HALF, HALF, W_FLOOR)])}
-        fill="#f6f1e4" stroke="#ddd5c5" strokeWidth={0.9} />
+        fill="#f6f1e4" stroke="#ddd5c5" strokeWidth={ink(0.9)} />
       {floor.map((c, i) => <polygon key={`f${i}`} points={c.pts} fill={c.fill} />)}
       <polygon points={poly2([pr(-1, -1, W_FLOOR), pr(1, -1, W_FLOOR), pr(1, 1, W_FLOOR), pr(-1, 1, W_FLOOR)])}
-        fill="none" stroke="#cfc6b2" strokeWidth={0.9} />
-      <line {...seg(pr(-1, v0, W_FLOOR), pr(1, v0, W_FLOOR))} stroke={C_DX} strokeWidth={1.4} strokeDasharray="4 3" opacity={0.75} />
-      <line {...seg(pr(u0, -1, W_FLOOR), pr(u0, 1, W_FLOOR))} stroke={C_DY} strokeWidth={1.4} strokeDasharray="4 3" opacity={0.75} />
-      <circle cx={pFloor[0]} cy={pFloor[1]} r={4} fill="#3a382f" opacity={0.6} />
+        fill="none" stroke="#cfc6b2" strokeWidth={ink(0.9)} />
+      <line {...seg(pr(-1, v0, W_FLOOR), pr(1, v0, W_FLOOR))} stroke={C_DX} strokeWidth={ink(1.2)} strokeDasharray="4 3" opacity={0.75} />
+      <line {...seg(pr(u0, -1, W_FLOOR), pr(u0, 1, W_FLOOR))} stroke={C_DY} strokeWidth={ink(1.2)} strokeDasharray="4 3" opacity={0.75} />
+      <circle cx={pFloor[0]} cy={pFloor[1]} r={ink(4)} fill="#3a382f" opacity={0.6} />
 
       {/* 曲面网格与两条剖面曲线：一起按深度排序后依次画出 */}
       {mergeByDepth(quads, curveSegs)}
 
-      {/* 当前点的两条切线，斜率 = 两个偏导数 */}
-      <line {...seg(tanX[0], tanX[1])} stroke={C_DX} strokeWidth={2.6} />
-      <line {...seg(tanY[0], tanY[1])} stroke={C_DY} strokeWidth={2.6} />
+      {/* 当前点的两条切线，斜率 = 两个偏导数。
+          和下面 2D 切片图里那两条切线是同一件东西，所以粗细也要一样（1.8 CSS px）。 */}
+      <line {...seg(tanX[0], tanX[1])} stroke={C_DX} strokeWidth={ink(1.8)} />
+      <line {...seg(tanY[0], tanY[1])} stroke={C_DY} strokeWidth={ink(1.8)} />
 
       {/* 被曲面挡住的那截墙上曲线，用淡线补回来，顺带把两个「影子点」永远留在最上层 */}
-      <path d={wallXPath} fill="none" stroke={C_DX} strokeWidth={1.5} strokeDasharray="3 3" opacity={0.5} />
-      <path d={wallYPath} fill="none" stroke={C_DY} strokeWidth={1.5} strokeDasharray="3 3" opacity={0.5} />
+      <path d={wallXPath} fill="none" stroke={C_DX} strokeWidth={ink(1.2)} strokeDasharray="3 3" opacity={0.5} />
+      <path d={wallYPath} fill="none" stroke={C_DY} strokeWidth={ink(1.2)} strokeDasharray="3 3" opacity={0.5} />
 
       {/* 地板 → 曲面的垂线，和「切口贴到墙上」的两条牵引线 */}
-      <line {...seg(pFloor, pSurf)} stroke="#3a382f" strokeWidth={1} strokeDasharray="3 3" opacity={0.5} />
-      <line {...seg(pSurf, pWallX)} stroke={C_DX} strokeWidth={0.9} strokeDasharray="3 3" opacity={0.6} />
-      <line {...seg(pSurf, pWallY)} stroke={C_DY} strokeWidth={0.9} strokeDasharray="3 3" opacity={0.6} />
-      <circle cx={pWallX[0]} cy={pWallX[1]} r={3.8} fill={C_DX} stroke="#faf7f0" strokeWidth={1.2} />
-      <circle cx={pWallY[0]} cy={pWallY[1]} r={3.8} fill={C_DY} stroke="#faf7f0" strokeWidth={1.2} />
-      <circle cx={pSurf[0]} cy={pSurf[1]} r={5.4} fill="#3a382f" stroke="#faf7f0" strokeWidth={1.6} />
+      <line {...seg(pFloor, pSurf)} stroke="#3a382f" strokeWidth={ink(0.9)} strokeDasharray="3 3" opacity={0.5} />
+      <line {...seg(pSurf, pWallX)} stroke={C_DX} strokeWidth={ink(0.9)} strokeDasharray="3 3" opacity={0.6} />
+      <line {...seg(pSurf, pWallY)} stroke={C_DY} strokeWidth={ink(0.9)} strokeDasharray="3 3" opacity={0.6} />
+      <circle cx={pWallX[0]} cy={pWallX[1]} r={ink(4.2)} fill={C_DX} stroke="#faf7f0" strokeWidth={ink(1.2)} />
+      <circle cx={pWallY[0]} cy={pWallY[1]} r={ink(4.2)} fill={C_DY} stroke="#faf7f0" strokeWidth={ink(1.2)} />
+      <circle cx={pSurf[0]} cy={pSurf[1]} r={ink(6.4)} fill="#3a382f" stroke="#faf7f0" strokeWidth={ink(1.8)} />
     </svg>
   )
 }
