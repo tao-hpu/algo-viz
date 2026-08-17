@@ -29,7 +29,8 @@ ssh aws-hk 'sudo docker restart algo-viz'         # bind-mount 的 nginx 容器�
 ## 每页分享卡片（OG）
 
 - 纯客户端 SPA，社交抓取器不跑 JS，所以每页 OG 必须在**构建期**焊进静态 HTML。
-- `scripts/prerender-og.mjs`（build 脚本末尾自动跑）读 `src/catalog.ts` 的 live 算法，为每个生成 `dist/a/<slug>/index.html`，覆盖 `<title>`/描述/`og:`/`twitter:`。加新 live 页无需改脚本，catalog 是唯一数据源。
+- `scripts/prerender-og.mjs`（build 脚本末尾自动跑）读 `src/catalog.ts` 的 live 算法，为每个生成 `dist/a/<slug>/index.html`，覆盖 `<title>`/描述/`canonical`/`og:`/`twitter:`。加新 live 页无需改脚本，catalog 是唯一数据源。
+- **OG 漏替换会构建失败，不用靠人记**：脚本有四道自检——index.html 少了任何一个待替换的 meta、catalog 里 slug 重复（会互相覆盖文件）、某页 title/hook 为空、成品里还剩着站级兜底文案，任何一条不满足就抛错，`pnpm build` 当场中断。分享卡片是只有别人转发时才看得见的东西，漏了不报错，所以卡在构建期。
 - nginx 用 `try_files $uri $uri/index.html =404;` + `error_page 404 /index.html;` 让深链接直接命中预渲染文件、零跳转，同时让不存在的地址真的返回 404（响应体仍是 SPA 壳，前端渲染 404 页）。**别改回 `$uri/`**——那会 301 跳到带斜杠 URL；**也别把兜底改回 `/index.html`**——那会让所有拼错的地址返回 200，搜索引擎当正经页面收录。
 - `scripts/prerender-og.mjs` 同时写 `dist/sitemap.xml` 和 `dist/robots.txt`，数据源同样是 catalog，加页不用改脚本。
 - 站级兜底 OG + 品牌卡片图在 `index.html` 和 `public/og-cover.png`（1200×630，绝对 URL 指向 algo.fim.ai）。

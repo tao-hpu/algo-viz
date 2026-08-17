@@ -37,7 +37,22 @@ function setCanonical(html, url) {
 
 const base = await readFile(join(DIST, 'index.html'), 'utf8')
 
+// 站级兜底文案：拿它当「没被替换掉」的判据。任何一页的成品里再出现它，
+// 就说明这一页漏改了，构建当场失败——OG 是分享出去才看得见的东西，
+// 漏了不会有任何报错，只会在别人的聊天窗口里露馅，所以必须在这里卡死。
+const baseTitle = base.match(/<title>([\s\S]*?)<\/title>/)?.[1] ?? ''
+const baseDesc = base.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? ''
+if (!baseTitle || !baseDesc) throw new Error('prerender: index.html 里没读到站级标题或描述，结构变了？')
+
+// slug 是文件路径，重了会后写的悄悄盖掉先写的，catalog 又是唯一数据源，先查一遍。
+const dup = liveAlgos.map((a) => a.slug).filter((s, i, all) => all.indexOf(s) !== i)
+if (dup.length) throw new Error(`prerender: catalog 里 slug 重复：${[...new Set(dup)].join('、')}`)
+
 for (const algo of liveAlgos) {
+  if (!algo.title?.trim() || !algo.hook?.trim()) {
+    throw new Error(`prerender: ${algo.slug} 的 title 或 hook 是空的，分享卡片会没有文案`)
+  }
+
   const title = `${algo.title} · ${SITE}`
   const desc = algo.hook
   const url = `${ORIGIN}/a/${algo.slug}`
@@ -52,6 +67,14 @@ for (const algo of liveAlgos) {
   html = setMetaContent(html, 'property', 'og:image:alt', `${algo.title} · ${SITE}`)
   html = setMetaContent(html, 'name', 'twitter:title', title)
   html = setMetaContent(html, 'name', 'twitter:description', desc)
+
+  // 成品自检：站级兜底的标题和描述都不该再剩下，本页的标题和描述都得在。
+  if (html.includes(`<title>${baseTitle}</title>`) || html.includes(`content="${baseDesc}"`)) {
+    throw new Error(`prerender: ${algo.slug} 还留着站级兜底文案，OG 没替换干净`)
+  }
+  for (const [what, value] of [['标题', escText(title)], ['描述', escAttr(desc)]]) {
+    if (!html.includes(value)) throw new Error(`prerender: ${algo.slug} 的${what}没写进成品`)
+  }
 
   const outDir = join(DIST, 'a', algo.slug)
   await mkdir(outDir, { recursive: true })
